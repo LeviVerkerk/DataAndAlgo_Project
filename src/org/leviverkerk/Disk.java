@@ -10,6 +10,14 @@ public class Disk {
         this.radius = radius;
     }
 
+    public int getCost() {
+        return cost;
+    }
+
+    public int getRadius() {
+        return radius;
+    }
+
     @Override
     public String toString() {
         return "Disk{" +

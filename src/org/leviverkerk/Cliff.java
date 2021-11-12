@@ -19,6 +19,26 @@ public class Cliff {
         this.disks = disks;
     }
 
+    public int getN() {
+        return N;
+    }
+
+    public int getM() {
+        return M;
+    }
+
+    public int getW() {
+        return W;
+    }
+
+    public ArrayList<Coordinate> getCoordinates() {
+        return coordinates;
+    }
+
+    public ArrayList<Disk> getDisks() {
+        return disks;
+    }
+
     @Override
     public String toString() {
         return "Cliff{" +
