@@ -30,6 +30,22 @@ public class Main {
         }
     }
 
+    static int dijkstra(Cliff cliff) {
+
+        Map<Coordinate, Integer> startingPoints = findStartPoints(cliff);
+
+        for (Coordinate source : startingPoints.keySet()) {
+            Map<Coordinate, Integer> dist = new HashMap<>();
+            for (int i = 0; i < cliff.getCoordinates().size(); i++) {
+                dist.put(cliff.getCoordinates().get(i), Integer.MAX_VALUE);
+            }
+            dist.put(source, startingPoints.get(source));
+
+            
+
+        }
+    }
+
     static Map<Coordinate, Integer> findAllNeighbours(Coordinate source, Cliff cliff) {
 
         Map<Coordinate, Integer> neighbours = new HashMap<>();
@@ -42,8 +58,6 @@ public class Main {
                 for (Coordinate coordinate : cliff.getCoordinates()) {
 
                     double dist = distance(source, coordinate);
-
-//                    System.out.println("Calculated distance between " + source + " and " + coordinate + ": " + dist);
 
                     if (dist <= radius && dist != 0) {
                         if (neighbours.get(coordinate) != null) {
@@ -75,8 +89,6 @@ public class Main {
             for (Coordinate coordinate : cliff.getCoordinates()) {
                 double dist = coordinate.getY();
 
-//                    System.out.println("Calculated distance between " + source + " and " + coordinate + ": " + dist);
-
                 if (dist <= radius && dist != 0) {
                     if (start.get(coordinate) != null) {
                         if (start.get(coordinate) > cost) {
@@ -100,8 +112,6 @@ public class Main {
 
             for (Coordinate coordinate : cliff.getCoordinates()) {
                 double dist = cliff.getW()-coordinate.getY();
-
-//                    System.out.println("Calculated distance between " + source + " and " + coordinate + ": " + dist);
 
                 if (dist <= radius && dist != 0) {
                     if (end.get(coordinate) != null) {
