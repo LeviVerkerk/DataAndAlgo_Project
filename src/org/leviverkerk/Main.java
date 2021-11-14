@@ -1,9 +1,7 @@
 package org.leviverkerk;
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class Main {
 
@@ -26,6 +24,8 @@ public class Main {
             System.out.println("All end points:");
 
             System.out.println(findEndPoints(input1Cliff));
+
+            System.out.println(dijkstra(input1Cliff));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -35,16 +35,53 @@ public class Main {
 
         Map<Coordinate, Integer> startingPoints = findStartPoints(cliff);
 
-        for (Coordinate source : startingPoints.keySet()) {
-            Map<Coordinate, Integer> dist = new HashMap<>();
-            for (int i = 0; i < cliff.getCoordinates().size(); i++) {
-                dist.put(cliff.getCoordinates().get(i), Integer.MAX_VALUE);
-            }
-            dist.put(source, startingPoints.get(source));
+        int minCost = Integer.MAX_VALUE;
 
-            
+        for (Coordinate source : startingPoints.keySet()) {
+
+            Map<Coordinate, Integer> path = new HashMap<>();
+//            Map<Coordinate, Coordinate> previous = new HashMap<>();
+
+            Queue<Node> PQueue = new PriorityQueue<>();
+
+            for (Coordinate V : cliff.getCoordinates()) {
+                path.put(V, Integer.MAX_VALUE);
+                if (!V.equals(source)) {
+                    PQueue.add(new Node(V, Integer.MAX_VALUE));
+                }
+            }
+
+            path.put(source, 0);
+            PQueue.add(new Node(source, 0));
+
+            while (!PQueue.isEmpty()) {
+                Coordinate U = PQueue.remove().getCoordinate();
+                Map<Coordinate, Integer> neighbours = findAllNeighbours(U, cliff);
+                for (Coordinate V : neighbours.keySet()) {
+                    int tempDist = path.get(U) + neighbours.get(V);
+                    if (tempDist < path.get(V)) {
+                        path.put(V, tempDist);
+                    }
+                }
+            }
+
+            Map<Coordinate, Integer> endPoints = findEndPoints(cliff);
+            for (Coordinate endPoint : endPoints.keySet()) {
+                int costFromEndPointToCliff = endPoints.get(endPoint);
+                int costFromSourceToEndPoint = path.get(endPoint);
+                int costFromCliffToSource = startingPoints.get(source);
+
+                int totalCost = costFromCliffToSource + costFromEndPointToCliff + costFromSourceToEndPoint;
+
+                if (totalCost < minCost) {
+                    minCost = totalCost;
+                }
+
+            }
 
         }
+
+        return minCost;
     }
 
     static Map<Coordinate, Integer> findAllNeighbours(Coordinate source, Cliff cliff) {

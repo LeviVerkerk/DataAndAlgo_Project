@@ -1,5 +1,7 @@
 package org.leviverkerk;
 
+import java.util.Comparator;
+
 public class Coordinate {
 
     private int x;
