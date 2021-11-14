@@ -31,6 +31,19 @@ public class Main {
         }
     }
 
+    static int minValue (Cliff cliff, Coordinate coordinate){
+        int m = Integer.MAX_VALUE;
+        int index = Integer.MAX_VALUE;
+        Map<Coordinate, Integer> neighbours = findAllNeighbours(coordinate, cliff);
+        for (int i = 0; i < neighbours.size(); i++){
+            if(neighbours.containsKey(cliff.getCoordinates().get(i)) && neighbours.get(i) < m){
+                m = neighbours.get(i);
+                index = cliff.getCoordinates().indexOf(neighbours.get(i));
+            }
+        }
+        return index;
+    }
+
     static int dijkstra(Cliff cliff) {
 
         Map<Coordinate, Integer> startingPoints = findStartPoints(cliff);
