@@ -57,6 +57,7 @@ public class Main {
 
             Queue<Node> PQueue = new PriorityQueue<>();
 
+            //  Set all distances to infinity
             for (Coordinate V : cliff.getCoordinates()) {
                 path.put(V, Integer.MAX_VALUE);
                 if (!V.equals(source)) {
@@ -64,20 +65,30 @@ public class Main {
                 }
             }
 
+            //  Set the cost for source node to 0
             path.put(source, 0);
             PQueue.add(new Node(source, 0));
 
+            //  Loop through the queue until it's empty
             while (!PQueue.isEmpty()) {
+                //  Retrieve the minimal element U from the queue
                 Coordinate U = PQueue.remove().getCoordinate();
+                //  Retrieve a map of all reachable neighbours from U, associated with the minimal cost it takes to get there
                 Map<Coordinate, Integer> neighbours = findAllNeighbours(U, cliff);
                 for (Coordinate V : neighbours.keySet()) {
+                    //  For each neighbour we set it to the cost it takes to get to node U + the cost from U to V
                     int tempDist = path.get(U) + neighbours.get(V);
+                    //  If this cost is less than the one previously assigned we replace it.
                     if (tempDist < path.get(V)) {
                         path.put(V, tempDist);
                     }
                 }
             }
 
+            /*
+            Finally, we find a map of all endPoints. These are points from which we're able to reach the end.
+            They are mapped to the associated cost it takes to get from the endPoint to the end
+            */
             Map<Coordinate, Integer> endPoints = findEndPoints(cliff);
             for (Coordinate endPoint : endPoints.keySet()) {
                 int costFromEndPointToCliff = endPoints.get(endPoint);
@@ -97,6 +108,12 @@ public class Main {
         return minCost;
     }
 
+    /*
+    @param Coordinate source, this is the source node from where we want to find the neighbours.
+    @param Cliff cliff, this is the cliff for which we have to solve.
+
+    @return Map<Coordinate, Integer> where each coordinate, which is a neighbour of source, is mapped to the cost it takes to get from source to this coordinate
+     */
     static Map<Coordinate, Integer> findAllNeighbours(Coordinate source, Cliff cliff) {
 
         Map<Coordinate, Integer> neighbours = new HashMap<>();
