@@ -6,7 +6,6 @@ import java.util.*;
 public class Main {
 
     public static void main(String[] args) {
-        // write your code here
         try {
             System.out.println(System.getProperty("user.dir"));
             Cliff input1Cliff = InputParser.readInput("./src/org/leviverkerk/testInput1.txt");
@@ -31,19 +30,6 @@ public class Main {
         }
     }
 
-    static int minValue (Cliff cliff, Coordinate coordinate){
-        int m = Integer.MAX_VALUE;
-        int index = Integer.MAX_VALUE;
-        Map<Coordinate, Integer> neighbours = findAllNeighbours(coordinate, cliff);
-        for (int i = 0; i < neighbours.size(); i++){
-            if(neighbours.containsKey(cliff.getCoordinates().get(i)) && neighbours.get(i) < m){
-                m = neighbours.get(i);
-                index = cliff.getCoordinates().indexOf(neighbours.get(i));
-            }
-        }
-        return index;
-    }
-
     static int dijkstra(Cliff cliff) {
 
         Map<Coordinate, Integer> startingPoints = findStartPoints(cliff);
@@ -53,7 +39,6 @@ public class Main {
         for (Coordinate source : startingPoints.keySet()) {
 
             Map<Coordinate, Integer> path = new HashMap<>();
-//            Map<Coordinate, Coordinate> previous = new HashMap<>();
 
             Queue<Node> PQueue = new PriorityQueue<>();
 
@@ -194,11 +179,5 @@ public class Main {
         }
         return end;
     }
-
-    void runAlgorithm(Cliff cliff) {
-
-    }
-
-
 }
 
