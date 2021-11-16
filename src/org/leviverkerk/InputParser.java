@@ -7,6 +7,21 @@ import java.util.Scanner;
 
 public class InputParser {
 
+    //TODO make sure inputhandler works with domjudge input
+    // example for java:
+    /*
+
+    import java.util.*;
+    class Main {
+      public static void main(String[] args) {
+        Scanner s = new Scanner(System.in);
+        System.err.println("give me N"); // debug output
+        int N = s.nextInt(); // read N from the input
+        System.out.println(N); // write N to the output
+      }
+    }
+     */
+
     public static Cliff readInput(String filePath) throws FileNotFoundException {
         //  Open file reader
         File file = new File(filePath);
