@@ -1,9 +1,9 @@
 package org.leviverkerk;
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.PriorityQueue;
 
 public class Main {
 
@@ -15,17 +15,17 @@ public class Main {
 
             System.out.println(input1Cliff);
 
-            System.out.println("--------NEIGHBOURS FROM " + input1Cliff.getCoordinates().get(0) + "-----------");
+            System.out.println("--------NEIGHBOURS FROM " + input1Cliff.getCoordinates().get(1) + "-----------");
 
-//            System.out.println(findAllNeighbours(input1Cliff.getCoordinates().get(0), input1Cliff));
-
-            System.out.println("All starting points:");
-
-            System.out.println(findStartPoints(input1Cliff));
-
-            System.out.println("All end points:");
-
-            System.out.println(findEndPoints(input1Cliff));
+            System.out.println(findAllNeighbours(input1Cliff.getCoordinates().get(1), input1Cliff));
+//
+//            System.out.println("All starting points:");
+//
+//            System.out.println(findStartPoints(input1Cliff));
+//
+//            System.out.println("All end points:");
+//
+//            System.out.println(findEndPoints(input1Cliff));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -33,10 +33,70 @@ public class Main {
 
     static int dijkstra(Cliff cliff) {
 
+        int[] distances = new int[cliff.getN()];
+        Disk[] disks = new Disk[cliff.getN()];
+        Node[] parents = new Node[cliff.getN()];
+
+        for (int i = 0; i < cliff.getN(); i++) {
+            distances[i] = Integer.MAX_VALUE;
+            disks[i] = null;
+            parents[i] = null;
+        }
+
+        distances[0] = 0;
+        PriorityQueue<Node> queue = new PriorityQueue<>();
+
+
+        return -1;
     }
 
     static Map<Node, Integer> findAllNeighbours(Node source, Cliff cliff) {
 
+        Map<Node, Integer> neighbours = new HashMap<>();
+
+        if (source.getCurrentDisk() != null) {
+            for (Disk disk1 : cliff.getDisks()) {
+                for (Disk disk2 : cliff.getDisks()) {
+                    if (disk1.getRadius() >= source.getRadius()) {
+                        helper(source, cliff, neighbours, disk1, disk2);
+                    }
+                }
+            }
+        } else {
+            for (Disk disk1 : cliff.getDisks()) {
+                for (Disk disk2 : cliff.getDisks()) {
+                    helper(source, cliff, neighbours, disk1, disk2);
+                }
+            }
+        }
+
+        neighbours.remove(source);
+        return neighbours;
+}
+
+    private static void helper(Node source, Cliff cliff, Map<Node, Integer> neighbours, Disk disk1, Disk disk2) {
+        for (Node V : cliff.getCoordinates()) {
+            if (!V.equals(source)) {
+                int radius = disk1.getRadius() + disk2.getRadius();
+                int cost = disk1.getCost() + disk2.getCost();
+
+                //  Check if node is in range with these disks
+                if (radius >= distance(source.getCoordinate(), V.getCoordinate())) {
+                    // If this node isn't saved yet OR the minimal cost was larger write it to map
+                    if (neighbours.get(V) == null || neighbours.get(V) > cost) {
+                        neighbours.put(V, cost);
+                        //  Assign smallest disk to source node
+                        if (disk1.getCost() <= disk2.getCost()) {
+                            source.setCurrentDisk(disk1);
+                            V.setCurrentDisk(disk2);
+                        } else {
+                            source.setCurrentDisk(disk2);
+                            source.setCurrentDisk(disk1);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     static double distance(Coordinate a, Coordinate b) {
@@ -44,11 +104,11 @@ public class Main {
     }
 
     static Map<Coordinate, Integer> findStartPoints(Cliff cliff) {
-
+        return null;
     }
 
     static Map<Coordinate, Integer> findEndPoints(Cliff cliff) {
-
+        return null;
     }
 }
 

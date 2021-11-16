@@ -1,5 +1,7 @@
 package org.leviverkerk;
 
+import java.util.Objects;
+
 public class Node implements Comparable<Node>{
 
     private Coordinate coordinate;
@@ -37,6 +39,19 @@ public class Node implements Comparable<Node>{
     @Override
     public int compareTo(Node o) {
         return 0;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Node node = (Node) o;
+        return coordinate.equals(node.coordinate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(coordinate);
     }
 
     @Override
