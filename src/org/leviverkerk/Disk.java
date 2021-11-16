@@ -1,6 +1,8 @@
 package org.leviverkerk;
 
-public class Disk {
+import java.util.Comparator;
+
+public class Disk implements Comparator<Disk>, Comparable<Disk> {
 
     private int cost;
     private int radius;
@@ -16,6 +18,16 @@ public class Disk {
 
     public int getRadius() {
         return radius;
+    }
+
+    @Override
+    public int compareTo(Disk o) {
+        return Integer.compare(cost, o.cost);
+    }
+
+    @Override
+    public int compare(Disk o1, Disk o2) {
+        return Integer.compare(o1.cost, o2.cost);
     }
 
     @Override

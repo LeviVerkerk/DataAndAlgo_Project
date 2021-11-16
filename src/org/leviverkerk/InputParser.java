@@ -19,14 +19,14 @@ public class InputParser {
         int M = Integer.parseInt(nAndM[1]);
         int W = Integer.parseInt(nAndM[2]);
 
-        ArrayList<Coordinate> coordinates = new ArrayList<>();
+        ArrayList<Node> nodes = new ArrayList<>();
 
         for (int i = 0; i < N; i++) {
             String line = myReader.nextLine();
             String[] coordinatesString = line.split(" ");
             int x = Integer.parseInt(coordinatesString[0]);
             int y = Integer.parseInt(coordinatesString[1]);
-            coordinates.add(new Coordinate(x, y));
+            nodes.add(new Node(new Coordinate(x, y)));
         }
 
         ArrayList<Disk> disks = new ArrayList<>();
@@ -41,6 +41,6 @@ public class InputParser {
 
         myReader.close();
 
-        return new Cliff(N, M, W, coordinates, disks);
+        return new Cliff(N, M, W, nodes, disks);
     }
 }

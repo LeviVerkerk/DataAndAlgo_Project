@@ -1,6 +1,8 @@
 package org.leviverkerk;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class Cliff {
 
@@ -8,15 +10,15 @@ public class Cliff {
     private int M;
     private int W;
 
-    private ArrayList<Coordinate> coordinates;
-    private ArrayList<Disk> disks;
+    private List<Node> coordinates;
+    private List<Disk> disks;
 
-    public Cliff(int n, int m, int w, ArrayList<Coordinate> coordinates, ArrayList<Disk> disks) {
+    public Cliff(int n, int m, int w, ArrayList<Node> coordinates, ArrayList<Disk> disks) {
         N = n;
         M = m;
         W = w;
         this.coordinates = coordinates;
-        this.disks = disks;
+        this.disks = disks.stream().sorted().collect(Collectors.toList());
     }
 
     public int getN() {
@@ -31,11 +33,11 @@ public class Cliff {
         return W;
     }
 
-    public ArrayList<Coordinate> getCoordinates() {
+    public List<Node> getCoordinates() {
         return coordinates;
     }
 
-    public ArrayList<Disk> getDisks() {
+    public List<Disk> getDisks() {
         return disks;
     }
 
