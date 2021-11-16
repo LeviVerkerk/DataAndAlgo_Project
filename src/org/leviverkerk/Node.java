@@ -6,10 +6,12 @@ public class Node implements Comparator<Node>, Comparable<Node> {
 
     private Coordinate coordinate;
     private int cost;
+    private Disk currentDisk;
 
-    public Node(Coordinate coordinate, int cost) {
+    public Node(Coordinate coordinate, int cost, Disk currentDisk) {
         this.coordinate = coordinate;
         this.cost = cost;
+        this.currentDisk = currentDisk;
     }
 
     public void setCoordinate(Coordinate coordinate) {
@@ -26,6 +28,14 @@ public class Node implements Comparator<Node>, Comparable<Node> {
 
     public int getCost() {
         return cost;
+    }
+
+    public Disk getCurrentDisk() {
+        return currentDisk;
+    }
+
+    public void setCurrentDisk(Disk currentDisk) {
+        this.currentDisk = currentDisk;
     }
 
     @Override
