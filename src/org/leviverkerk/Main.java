@@ -103,12 +103,37 @@ public class Main {
         return Math.hypot(Math.abs(a.getX() - b.getX()), Math.abs(a.getY() - b.getY()));
     }
 
-    static Map<Coordinate, Integer> findStartPoints(Cliff cliff) {
-        return null;
+    static Map<Node, Integer> findStartPoints(Cliff cliff) {
+        Map<Node, Integer> startPoints = new HashMap<>();
+
+        for (Node V : cliff.getCoordinates()) {
+            for (Disk disk : cliff.getDisks()) {
+                if (disk.getRadius() >= V.getCoordinate().getY()) {
+                    if (startPoints.get(V) == null || startPoints.get(V) > disk.getCost()) {
+                        V.setCurrentDisk(disk);
+                        startPoints.put(V, disk.getCost());
+                    }
+                }
+            }
+        }
+
+        return startPoints;
     }
 
-    static Map<Coordinate, Integer> findEndPoints(Cliff cliff) {
-        return null;
+    static Map<Node, Integer> findEndPoints(Cliff cliff) {
+        Map<Node, Integer> endPoints = new HashMap<>();
+
+        for (Node V : cliff.getCoordinates()) {
+            for (Disk disk : cliff.getDisks()) {
+                if (cliff.getW() - disk.getRadius() <= V.getCoordinate().getY()) {
+                    if (endPoints.get(V) == null || endPoints.get(V) > disk.getCost()) {
+                        V.setCurrentDisk(disk);
+                        endPoints.put(V, disk.getCost());
+                    }
+                }
+            }
+        }
+        return endPoints;
     }
 }
 
