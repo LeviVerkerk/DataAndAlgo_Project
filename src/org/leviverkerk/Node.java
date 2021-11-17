@@ -1,15 +1,18 @@
 package org.leviverkerk;
 
+import java.util.Comparator;
 import java.util.Objects;
 
-public class Node implements Comparable<Node>{
+public class Node implements Comparable<Node>, Comparator<Node> {
 
     private Coordinate coordinate;
     private Disk currentDisk;
+    private int distance;
 
     public Node(Coordinate coordinate) {
         this.coordinate = coordinate;
         this.currentDisk = null;
+        this.distance = Integer.MAX_VALUE;
     }
 
     public Coordinate getCoordinate() {
@@ -36,9 +39,22 @@ public class Node implements Comparable<Node>{
         return currentDisk.getRadius();
     }
 
+    public int getDistance() {
+        return distance;
+    }
+
+    public void setDistance(int distance) {
+        this.distance = distance;
+    }
+
     @Override
     public int compareTo(Node o) {
-        return 0;
+        return Integer.compare(distance, o.getDistance());
+    }
+
+    @Override
+    public int compare(Node o1, Node o2) {
+        return Integer.compare(o1.distance, o2.distance);
     }
 
     @Override
@@ -59,6 +75,7 @@ public class Node implements Comparable<Node>{
         return "Node{" +
                 "coordinate=" + coordinate +
                 ", currentDisk=" + currentDisk +
+                ", distance=" + distance +
                 '}';
     }
 }
