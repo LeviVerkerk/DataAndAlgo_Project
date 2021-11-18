@@ -98,21 +98,31 @@ public class Main {
 
         Map<Node, Integer> endPoints = findEndPoints(cliff);
         for (Node endPoint : endPoints.keySet()) {
-            for (Node V : path.keySet()) {
-                if (endPoint.equals(V)) {
-                    if (endPoint.getRadius() >= V.getRadius()) {
-                        int tempCost = path.get(V) - V.getCost() + endPoint.getCost();
-                        if (tempCost < minCost) {
-                            minCost = tempCost;
-                        }
-                    } else {
-                        int tempCost = path.get(V) - endPoint.getCost() + V.getCost();
-                        if (tempCost < minCost) {
-                            minCost = tempCost;
-                        }
-                    }
+            if (endPoint.getCost() >= endPoints.get(endPoint)) {
+                if (endPoint.getDistance() < minCost) {
+                    minCost = endPoint.getDistance();
                 }
             }
+//            else {
+//                for (Disk disk : cliff.getDisks()) {
+//                    if (disk.getRadius() >)
+//                }
+//            }
+//            for (Node V : path.keySet()) {
+//                if (endPoint.equals(V)) {
+//                    if (endPoint.getRadius() >= V.getRadius()) {
+//                        int tempCost = path.get(V) - V.getCost() + endPoint.getCost();
+//                        if (tempCost < minCost) {
+//                            minCost = tempCost;
+//                        }
+//                    } else {
+//                        int tempCost = path.get(V) - endPoint.getCost() + V.getCost();
+//                        if (tempCost < minCost) {
+//                            minCost = tempCost;
+//                        }
+//                    }
+//                }
+//            }
         }
 
         return minCost;
