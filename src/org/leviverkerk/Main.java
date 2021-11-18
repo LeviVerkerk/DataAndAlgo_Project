@@ -15,9 +15,9 @@ public class Main {
 
             System.out.println("--------NEIGHBOURS FROM (8,7) -----------");
 
-            Node eightPointSeven = new Node(new Coordinate(8,7));
-            eightPointSeven.setDistance(102);
-            eightPointSeven.setCurrentDisk(new Disk(100, 3));
+            Node eightPointSeven = new Node(new Coordinate(4, 6));
+            eightPointSeven.setDistance(2);
+            eightPointSeven.setCurrentDisk(new Disk(1, 2));
 
             System.out.println(findAllNeighbours(eightPointSeven, input1Cliff));
 
@@ -45,7 +45,7 @@ public class Main {
         int minCost = Integer.MAX_VALUE;
         Set<Node> visited = new HashSet<>();
         Map<Node, Integer> path = new HashMap<>();
-        Queue<Node> PQueue = new PriorityQueue<>();
+        Queue<Node> PQueue = new PriorityQueue<>(cliff.getN(), Comparator.comparingInt(Node::getDistance));
 
         for (Node V : cliff.getCoordinates()) {
             path.put(V, Integer.MAX_VALUE);
@@ -60,11 +60,6 @@ public class Main {
         }
 
         while (!PQueue.isEmpty()) {
-
-            System.out.println("=====================");
-            System.out.println("Current queue:" + PQueue);
-            System.out.println("=====================");
-
             Node U = PQueue.poll();
 
             System.out.println("======================");
@@ -74,7 +69,7 @@ public class Main {
             visited.add(U);
 
             Map<Node, Integer> neighbours = findAllNeighbours(U, cliff);
-
+//            SortedSet<Node> neighboursSet = new TreeSet<>(neighbours.keySet());
             for (Node V : neighbours.keySet()) {
                 if (!visited.contains(V)) {
 //                    System.out.println("tempDist = " + path.get(U) + " + " + neighbours.get(V));
@@ -83,11 +78,15 @@ public class Main {
                         path.put(V, tempDist);
                         V.setDistance(tempDist);
                     }
-                    System.out.println("Adding to the queue : " + V);
+//                    System.out.println("Adding to the queue : " + V);
 
                     if (!PQueue.contains(V))
-                        PQueue.add(V);
-                    System.out.println("From" + U + "\nDiscovered " + V);
+                        PQueue.offer(V);
+                    else {
+                        PQueue.remove(V);
+                        PQueue.offer(V);
+                    }
+//                    System.out.println("From" + U + "\nDiscovered " + V);
                 }
             }
             visited.add(U);

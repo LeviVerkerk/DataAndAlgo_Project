@@ -49,12 +49,24 @@ public class Node implements Comparable<Node>, Comparator<Node> {
 
     @Override
     public int compareTo(Node o) {
-        return Integer.compare(distance, o.getDistance());
+        if (Integer.compare(distance, o.getDistance()) != 0)
+            return Integer.compare(distance, o.getDistance());
+        if (o.equals(this)) {
+            return 0;
+        } else {
+            return -1;
+        }
     }
 
     @Override
     public int compare(Node o1, Node o2) {
-        return Integer.compare(o1.distance, o2.distance);
+        if (Integer.compare(o1.distance, o2.getDistance()) != 0)
+            return Integer.compare(o1.distance, o2.getDistance());
+        if (o2.equals(o1)) {
+            return 0;
+        } else {
+            return -1;
+        }
     }
 
     @Override
