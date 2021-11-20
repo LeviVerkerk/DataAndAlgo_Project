@@ -6,12 +6,12 @@ import java.util.stream.Collectors;
 
 public class Cliff {
 
-    private int N;
-    private int M;
-    private int W;
+    private final int N;
+    private final int M;
+    private final int W;
 
-    private List<Node> coordinates;
-    private List<Disk> disks;
+    private final List<Node> coordinates;
+    private final List<Disk> disks;
 
     public Cliff(int n, int m, int w, ArrayList<Node> coordinates, ArrayList<Disk> disks) {
         N = n;
