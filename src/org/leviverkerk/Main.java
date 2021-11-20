@@ -13,27 +13,19 @@ public class Main {
 
             System.out.println(input1Cliff);
 
-            System.out.println("--------NEIGHBOURS FROM (8,7) -----------");
+            System.out.println("--------NEIGHBOURS FROM (15,4) -----------");
 
-            Node eightPointSeven = new Node(new Coordinate(4, 6));
-            eightPointSeven.setDistance(2);
-            eightPointSeven.setCurrentDisk(new Disk(1, 2));
+            Node fifteenPointFour = new Node(new Coordinate(15, 4));
+            fifteenPointFour.setDistance(104);
+            fifteenPointFour.setCurrentDisk(new Disk(1, 2));
 
-            System.out.println(findAllNeighbours(eightPointSeven, input1Cliff));
-
+            System.out.println(findAllNeighbours(fifteenPointFour, input1Cliff));
+//
             System.out.println("=====================================");
             System.out.println("Start Dijkstra's");
             System.out.println("=====================================");
 
             System.out.println("Minimal cost is:" + dijkstra(input1Cliff));
-//
-//            System.out.println("All starting points:");
-//
-//            System.out.println(findStartPoints(input1Cliff));
-//
-//            System.out.println("All end points:");
-//
-//            System.out.println(findEndPoints(input1Cliff));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -75,18 +67,15 @@ public class Main {
 //                    System.out.println("tempDist = " + path.get(U) + " + " + neighbours.get(V));
                     int tempDist = path.get(U) + neighbours.get(V);
                     if (tempDist < path.get(V)) {
-                        path.put(V, tempDist);
+                        V.setCurrentDisk(cliff.getDisk(neighbours.get(V)));
                         V.setDistance(tempDist);
+                        path.put(V, tempDist);
                     }
 //                    System.out.println("Adding to the queue : " + V);
 
-                    if (!PQueue.contains(V))
-                        PQueue.offer(V);
-                    else {
-                        PQueue.remove(V);
-                        PQueue.offer(V);
-                    }
-//                    System.out.println("From" + U + "\nDiscovered " + V);
+                    PQueue.remove(V);
+                    PQueue.offer(V);
+                    System.out.println("From" + U + "\nDiscovered " + V);
                 }
             }
             visited.add(U);
@@ -103,26 +92,6 @@ public class Main {
                     minCost = endPoint.getDistance();
                 }
             }
-//            else {
-//                for (Disk disk : cliff.getDisks()) {
-//                    if (disk.getRadius() >)
-//                }
-//            }
-//            for (Node V : path.keySet()) {
-//                if (endPoint.equals(V)) {
-//                    if (endPoint.getRadius() >= V.getRadius()) {
-//                        int tempCost = path.get(V) - V.getCost() + endPoint.getCost();
-//                        if (tempCost < minCost) {
-//                            minCost = tempCost;
-//                        }
-//                    } else {
-//                        int tempCost = path.get(V) - endPoint.getCost() + V.getCost();
-//                        if (tempCost < minCost) {
-//                            minCost = tempCost;
-//                        }
-//                    }
-//                }
-//            }
         }
 
         return minCost;
@@ -135,7 +104,7 @@ public class Main {
         if (source.getCurrentDisk() != null) {
             for (Disk disk1 : cliff.getDisks()) {
                 for (Disk disk2 : cliff.getDisks()) {
-                    if (disk1.getRadius() >= source.getRadius()) {
+                    if (disk1.getRadius() <= source.getRadius()) {
                         helper(source, cliff, neighbours, disk1, disk2);
                     }
                 }
@@ -155,23 +124,17 @@ public class Main {
     private static void helper(Node source, Cliff cliff, Map<Node, Integer> neighbours, Disk disk1, Disk disk2) {
         for (Node V : cliff.getCoordinates()) {
             if (!V.equals(source)) {
-                int radius = disk1.getRadius() + disk2.getRadius();
-                int cost = disk1.getCost() + disk2.getCost();
+                if (source.getCoordinate().equals(new Coordinate(8,7)) && V.getCoordinate().equals(new Coordinate(11,4))) {
+                    System.out.println("hi");
+                }
+
+                int sourceRadius = Math.max(disk1.getRadius(), source.getRadius());
+
+                int radius = sourceRadius + disk2.getRadius();
 
                 //  Check if node is in range with these disks
                 if (radius >= distance(source.getCoordinate(), V.getCoordinate())) {
-                    // If this node isn't saved yet OR the minimal cost was larger write it to map
-                    if (neighbours.get(V) == null || neighbours.get(V) > Math.max(disk1.getCost(), disk2.getCost())) {
-                        neighbours.put(V, disk2.getCost());
-                        //  Assign smallest disk to source node
-//                        if (disk1.getCost() <= disk2.getCost()) {
-                        source.setCurrentDisk(disk1);
-                        V.setCurrentDisk(disk2);
-//                        } else {
-//                            source.setCurrentDisk(disk2);
-//                            V.setCurrentDisk(disk1);
-//                        }
-                    }
+                    neighbours.computeIfAbsent(V, k -> disk2.getCost());
                 }
             }
         }
@@ -205,7 +168,7 @@ public class Main {
             for (Disk disk : cliff.getDisks()) {
                 if (cliff.getW() - disk.getRadius() <= V.getCoordinate().getY()) {
                     if (endPoints.get(V) == null || endPoints.get(V) > disk.getCost()) {
-                        V.setCurrentDisk(disk);
+//                        V.setCurrentDisk(disk);
                         endPoints.put(V, disk.getCost());
                     }
                 }

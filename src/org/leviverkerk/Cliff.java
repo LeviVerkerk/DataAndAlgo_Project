@@ -41,6 +41,15 @@ public class Cliff {
         return disks;
     }
 
+    public Disk getDisk(int cost) {
+        for (Disk disk : disks) {
+            if (disk.getCost() == cost) {
+                return disk;
+            }
+        }
+        return null;
+    }
+
     @Override
     public String toString() {
         return "Cliff{" +
