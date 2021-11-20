@@ -9,7 +9,7 @@ public class Main {
         // write your code here
         try {
             System.out.println(System.getProperty("user.dir"));
-            Cliff input1Cliff = InputParser.readInput("./src/org/leviverkerk/testInput1.txt");
+            Cliff input1Cliff = InputParser.readInput("./src/org/leviverkerk/testInput2.txt");
 
             System.out.println(input1Cliff);
 
@@ -20,7 +20,7 @@ public class Main {
             fifteenPointFour.setCurrentDisk(new Disk(1, 2));
 
             System.out.println(findAllNeighbours(fifteenPointFour, input1Cliff));
-//
+
             System.out.println("=====================================");
             System.out.println("Start Dijkstra's");
             System.out.println("=====================================");
@@ -45,7 +45,6 @@ public class Main {
         System.out.println("Starting points : ");
         System.out.println(startingPoints);
         for (Node V : startingPoints.keySet()) {
-//            visited.add(V);
             V.setDistance(startingPoints.get(V));
             PQueue.add(V);
             path.put(V, startingPoints.get(V));
@@ -61,17 +60,14 @@ public class Main {
             visited.add(U);
 
             Map<Node, Integer> neighbours = findAllNeighbours(U, cliff);
-//            SortedSet<Node> neighboursSet = new TreeSet<>(neighbours.keySet());
             for (Node V : neighbours.keySet()) {
                 if (!visited.contains(V)) {
-//                    System.out.println("tempDist = " + path.get(U) + " + " + neighbours.get(V));
                     int tempDist = path.get(U) + neighbours.get(V);
                     if (tempDist < path.get(V)) {
                         V.setCurrentDisk(cliff.getDisk(neighbours.get(V)));
                         V.setDistance(tempDist);
                         path.put(V, tempDist);
                     }
-//                    System.out.println("Adding to the queue : " + V);
 
                     PQueue.remove(V);
                     PQueue.offer(V);
@@ -124,10 +120,6 @@ public class Main {
     private static void helper(Node source, Cliff cliff, Map<Node, Integer> neighbours, Disk disk1, Disk disk2) {
         for (Node V : cliff.getCoordinates()) {
             if (!V.equals(source)) {
-                if (source.getCoordinate().equals(new Coordinate(8,7)) && V.getCoordinate().equals(new Coordinate(11,4))) {
-                    System.out.println("hi");
-                }
-
                 int sourceRadius = Math.max(disk1.getRadius(), source.getRadius());
 
                 int radius = sourceRadius + disk2.getRadius();

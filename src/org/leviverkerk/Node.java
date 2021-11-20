@@ -84,10 +84,18 @@ public class Node implements Comparable<Node>, Comparator<Node> {
 
     @Override
     public String toString() {
-        return "Node{" +
-                "coordinate=" + coordinate +
-                ", currentDisk=" + currentDisk +
-                ", distance=" + distance +
-                '}';
+        if (currentDisk != null) {
+            return "Node{" +
+                    "coordinate=" + coordinate +
+                    ", currentDisk=" + currentDisk +
+                    ", distance=" + distance +
+                    '}';
+        } else {
+            return "Node{" +
+                    "coordinate=" + coordinate +
+                    ", distance=" + distance +
+                    '}';
+        }
+
     }
 }
