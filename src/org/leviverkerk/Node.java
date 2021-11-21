@@ -10,10 +10,10 @@ public class Node {
 
     private Integer distance = Integer.MAX_VALUE;
 
-    Map<Node, Integer> adjacentNodes = new HashMap<>();
+    Map<Node, Integer> neighbouringNodes = new HashMap<>();
 
     public void addDestination(Node destination, int distance) {
-        adjacentNodes.put(destination, distance);
+        neighbouringNodes.put(destination, distance);
     }
 
     public Node(NodeValue value) {
@@ -44,12 +44,12 @@ public class Node {
         this.distance = distance;
     }
 
-    public Map<Node, Integer> getAdjacentNodes() {
-        return adjacentNodes;
+    public Map<Node, Integer> getNeighbouringNodes() {
+        return neighbouringNodes;
     }
 
-    public void setAdjacentNodes(Map<Node, Integer> adjacentNodes) {
-        this.adjacentNodes = adjacentNodes;
+    public void setNeighbouringNodes(Map<Node, Integer> neighbouringNodes) {
+        this.neighbouringNodes = neighbouringNodes;
     }
 
     @Override

@@ -65,25 +65,25 @@ public class Main {
     Runtime complexity
      */
     static Graph dijkstra(Graph graph, Set<Node> startingNodes) {
-        Set<Node> settledNodes = new HashSet<>();
-        Set<Node> unsettledNodes = new HashSet<>(startingNodes);
+        Set<Node> visited = new HashSet<>();
+        Set<Node> unvisited = new HashSet<>(startingNodes);
 
-        while (unsettledNodes.size() != 0) {
+        while (unvisited.size() != 0) {
             //  Runtime complexity O(n) with n
-            Node currentNode = getLowestDistanceNode(unsettledNodes);
-            unsettledNodes.remove(currentNode);
-            for (Map.Entry<Node, Integer> adjacencyPair : currentNode.getAdjacentNodes().entrySet()) {
-                Node adjacentNode = adjacencyPair.getKey();
+            Node currentNode = getClosestNode(unvisited);
+            unvisited.remove(currentNode);
+            for (Map.Entry<Node, Integer> neighbouringPair : currentNode.getNeighbouringNodes().entrySet()) {
+                Node neighbourNode = neighbouringPair.getKey();
                 //  ! Optimization: if source is the same as destination we can skip!
-                if (currentNode != adjacentNode) {
-                    Integer edgeWeight = adjacencyPair.getValue();
-                    if (!settledNodes.contains(adjacentNode)) {
-                        calculateMinimumDistance(adjacentNode, edgeWeight, currentNode);
-                        unsettledNodes.add(adjacentNode);
+                if (currentNode != neighbourNode) {
+                    Integer edgeWeight = neighbouringPair.getValue();
+                    if (!visited.contains(neighbourNode)) {
+                        setMinimumDistance(neighbourNode, edgeWeight, currentNode);
+                        unvisited.add(neighbourNode);
                     }
                 }
             }
-            settledNodes.add(currentNode);
+            visited.add(currentNode);
         }
 
         return graph;
@@ -92,10 +92,10 @@ public class Main {
     /*
     Runtime complexity of O(n) with n being the amount of unsettled nodes
      */
-    static Node getLowestDistanceNode(Set<Node> unsettledNodes) {
+    static Node getClosestNode(Set<Node> unvisited) {
         Node lowestDistanceNode = null;
         int lowestDistance = Integer.MAX_VALUE;
-        for (Node node : unsettledNodes) {
+        for (Node node : unvisited) {
             int nodeDistance = node.getDistance();
             if (nodeDistance <= lowestDistance) {
                 lowestDistance = nodeDistance;
@@ -109,13 +109,13 @@ public class Main {
     Sets
     Runtime complexity O(1)
      */
-    static void calculateMinimumDistance(Node evaluationNode, Integer edgeWeight, Node sourceNode) {
+    static void setMinimumDistance(Node destinationNode, Integer edgeWeight, Node sourceNode) {
         Integer sourceDistance = sourceNode.getDistance();
-        if (sourceDistance + edgeWeight < evaluationNode.getDistance()) {
-            evaluationNode.setDistance(sourceDistance + edgeWeight);
+        if (sourceDistance + edgeWeight < destinationNode.getDistance()) {
+            destinationNode.setDistance(sourceDistance + edgeWeight);
             LinkedList<Node> shortestPath = new LinkedList<>(sourceNode.getShortestPath());
             shortestPath.add(sourceNode);
-            evaluationNode.setShortestPath(shortestPath);
+            destinationNode.setShortestPath(shortestPath);
         }
     }
 
