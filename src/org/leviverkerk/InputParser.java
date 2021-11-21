@@ -7,12 +7,15 @@ import java.util.Scanner;
 
 public class InputParser {
 
-    public static Cliff readInput(String filePath) throws FileNotFoundException {
+    public static Cliff readInput() throws FileNotFoundException {
         //  Open file reader
-        File file = new File(filePath);
-        Scanner myReader = new Scanner(file);
+        Scanner myReader = new Scanner(System.in);
 
         //  Read the first line and extract N, M and W
+        return getCliff(myReader);
+    }
+
+    private static Cliff getCliff(Scanner myReader) {
         String firstLine = myReader.nextLine();
         String[] nAndM = firstLine.split(" ");
         int N = Integer.parseInt(nAndM[0]);
@@ -42,5 +45,14 @@ public class InputParser {
         myReader.close();
 
         return new Cliff(N, M, W, nodes, disks);
+    }
+
+    public static Cliff readInput(String filePath) throws FileNotFoundException {
+        //  Open file reader
+        File file = new File(filePath);
+        Scanner myReader = new Scanner(file);
+
+        //  Read the first line and extract N, M and W
+        return getCliff(myReader);
     }
 }

@@ -8,24 +8,30 @@ public class Main {
     public static void main(String[] args) {
         // write your code here
         try {
-            System.out.println(System.getProperty("user.dir"));
+            System.err.println(System.getProperty("user.dir"));
             Cliff input1Cliff = InputParser.readInput("./src/org/leviverkerk/testInput2.txt");
 
-            System.out.println(input1Cliff);
+            System.err.println(input1Cliff);
 
-            System.out.println("--------NEIGHBOURS FROM (15,4) -----------");
+            System.err.println("--------NEIGHBOURS FROM (15,4) -----------");
 
             Node fifteenPointFour = new Node(new Coordinate(15, 4));
             fifteenPointFour.setDistance(104);
             fifteenPointFour.setCurrentDisk(new Disk(1, 2));
 
-            System.out.println(findAllNeighbours(fifteenPointFour, input1Cliff));
+            System.err.println(findAllNeighbours(fifteenPointFour, input1Cliff));
 
-            System.out.println("=====================================");
-            System.out.println("Start Dijkstra's");
-            System.out.println("=====================================");
+            System.err.println("=====================================");
+            System.err.println("Start Dijkstra's");
+            System.err.println("=====================================");
 
-            System.out.println("Minimal cost is:" + dijkstra(input1Cliff));
+            int result = dijkstra(InputParser.readInput());
+
+            if (result != Integer.MAX_VALUE) {
+                System.out.println(result);
+            } else {
+                System.out.println("Impossible");
+            }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -42,8 +48,8 @@ public class Main {
         for (Node V : cliff.getCoordinates()) {
             path.put(V, Integer.MAX_VALUE);
         }
-        System.out.println("Starting points : ");
-        System.out.println(startingPoints);
+        System.err.println("Starting points : ");
+        System.err.println(startingPoints);
         for (Node V : startingPoints.keySet()) {
             V.setDistance(startingPoints.get(V));
             PQueue.add(V);
@@ -53,9 +59,9 @@ public class Main {
         while (!PQueue.isEmpty()) {
             Node U = PQueue.poll();
 
-            System.out.println("======================");
-            System.out.println("Now visiting: " + U);
-            System.out.println("======================");
+            System.err.println("======================");
+            System.err.println("Now visiting: " + U);
+            System.err.println("======================");
 
             visited.add(U);
 
@@ -71,21 +77,23 @@ public class Main {
 
                     PQueue.remove(V);
                     PQueue.offer(V);
-                    System.out.println("From" + U + "\nDiscovered " + V);
+                    System.err.println("From" + U + "\nDiscovered " + V);
                 }
             }
             visited.add(U);
         }
 
-        System.out.println("------ PATH MAP ------");
-        System.out.println(path);
+        System.err.println("------ PATH MAP ------");
+        System.err.println(path);
 
 
         Map<Node, Integer> endPoints = findEndPoints(cliff);
         for (Node endPoint : endPoints.keySet()) {
-            if (endPoint.getCost() >= endPoints.get(endPoint)) {
-                if (endPoint.getDistance() < minCost) {
-                    minCost = endPoint.getDistance();
+            if (endPoint.getCurrentDisk() != null) {
+                if (endPoint.getCost() >= endPoints.get(endPoint)) {
+                    if (endPoint.getDistance() < minCost) {
+                        minCost = endPoint.getDistance();
+                    }
                 }
             }
         }
@@ -160,7 +168,6 @@ public class Main {
             for (Disk disk : cliff.getDisks()) {
                 if (cliff.getW() - disk.getRadius() <= V.getCoordinate().getY()) {
                     if (endPoints.get(V) == null || endPoints.get(V) > disk.getCost()) {
-//                        V.setCurrentDisk(disk);
                         endPoints.put(V, disk.getCost());
                     }
                 }
