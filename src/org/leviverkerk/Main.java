@@ -111,9 +111,8 @@ public class Main {
     static Map<Node, Integer> findStartPoints(Graph graph) {
         Map<Node, Integer> startPoints = new HashMap<>();
 
-        graph.getNodes().stream().filter(node -> {
-            return node.getValue().getCoordinate().getY() <= node.getValue().getDisk().getRadius();
-        }).forEach(node -> startPoints.put(node, node.getValue().getDisk().getCost()));
+        graph.getNodes().stream().filter(node -> node.getValue().getCoordinate().getY() <= node.getValue().getDisk().getRadius())
+                .forEach(node -> startPoints.put(node, node.getValue().getDisk().getCost()));
 
         return startPoints;
     }
