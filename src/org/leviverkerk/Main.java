@@ -8,24 +8,11 @@ public class Main {
     public static void main(String[] args) {
         // write your code here
         try {
-            System.err.println(System.getProperty("user.dir"));
-            Cliff input1Cliff = InputParser.readInput("./src/org/leviverkerk/testInput2.txt");
-
-            System.err.println(input1Cliff);
-
-            System.err.println("--------NEIGHBOURS FROM (15,4) -----------");
-
-            Node fifteenPointFour = new Node(new Coordinate(15, 4));
-            fifteenPointFour.setDistance(104);
-            fifteenPointFour.setCurrentDisk(new Disk(1, 2));
-
-            System.err.println(findAllNeighbours(fifteenPointFour, input1Cliff));
-
             System.err.println("=====================================");
             System.err.println("Start Dijkstra's");
             System.err.println("=====================================");
 
-            int result = dijkstra(InputParser.readInput());
+            int result = getMinimalCost(InputParser.readInput("./src/org/leviverkerk/testInput1.txt"));
 
             if (result != Integer.MAX_VALUE) {
                 System.out.println(result);
@@ -37,143 +24,126 @@ public class Main {
         }
     }
 
-    static int dijkstra(Cliff cliff) {
+    static int getMinimalCost(Cliff cliff) {
+        //  Create a Node foreach pilar in combination with disk
+        Graph graph = new Graph();
 
-        Map<Node, Integer> startingPoints = findStartPoints(cliff);
-        int minCost = Integer.MAX_VALUE;
-        Set<Node> visited = new HashSet<>();
-        Map<Node, Integer> path = new HashMap<>();
-        Queue<Node> PQueue = new PriorityQueue<>(cliff.getN(), Comparator.comparingInt(Node::getDistance));
-
-        for (Node V : cliff.getCoordinates()) {
-            path.put(V, Integer.MAX_VALUE);
-        }
-        System.err.println("Starting points : ");
-        System.err.println(startingPoints);
-        for (Node V : startingPoints.keySet()) {
-            V.setDistance(startingPoints.get(V));
-            PQueue.add(V);
-            path.put(V, startingPoints.get(V));
-        }
-
-        while (!PQueue.isEmpty()) {
-            Node U = PQueue.poll();
-
-            System.err.println("======================");
-            System.err.println("Now visiting: " + U);
-            System.err.println("======================");
-
-            visited.add(U);
-
-            Map<Node, Integer> neighbours = findAllNeighbours(U, cliff);
-            for (Node V : neighbours.keySet()) {
-                if (!visited.contains(V)) {
-                    int tempDist = path.get(U) + neighbours.get(V);
-                    if (tempDist < path.get(V)) {
-                        V.setCurrentDisk(cliff.getDisk(neighbours.get(V)));
-                        V.setDistance(tempDist);
-                        path.put(V, tempDist);
-                    }
-
-                    PQueue.remove(V);
-                    PQueue.offer(V);
-                    System.err.println("From" + U + "\nDiscovered " + V);
-                }
-            }
-            visited.add(U);
-        }
-
-        System.err.println("------ PATH MAP ------");
-        System.err.println(path);
-
-
-        Map<Node, Integer> endPoints = findEndPoints(cliff);
-        for (Node endPoint : endPoints.keySet()) {
-            if (endPoint.getCurrentDisk() != null) {
-                if (endPoint.getCost() >= endPoints.get(endPoint)) {
-                    if (endPoint.getDistance() < minCost) {
-                        minCost = endPoint.getDistance();
-                    }
-                }
+        for (Coordinate coordinate : cliff.getCoordinates()) {
+            for (Disk disk : cliff.getDisks()) {
+                graph.addNode(new Node( new NodeValue(coordinate, disk)));
             }
         }
 
-        return minCost;
+        // Add all destinations to all nodes (with their corresponding edge weight)
+        Set<Node> startingNodes = new HashSet<>();
+        graph.getNodes().forEach(source -> {
+            addDestinations(graph, source);
+            startingNodes.add(source);
+        });
+
+        // Set distances for each startingPoint
+        findStartPoints(graph).forEach(Node::setDistance);
+
+        //  Call #dijksta
+        System.err.println(dijkstra(graph, startingNodes));
+
+        // Find all endPoints and get endPoint with minimal cost
+        int minimalCost = Integer.MAX_VALUE;
+        for (Node endPoint : findEndPoints(graph, cliff.getW())) {
+            if(endPoint.getDistance() < minimalCost){
+                minimalCost = endPoint.getDistance();
+            }
+        }
+
+        return minimalCost;
+
     }
 
-    static Map<Node, Integer> findAllNeighbours(Node source, Cliff cliff) {
+    static Graph dijkstra(Graph graph, Set<Node> startingNodes) {
+        Set<Node> settledNodes = new HashSet<>();
+        Set<Node> unsettledNodes = new HashSet<>(startingNodes);
 
-        Map<Node, Integer> neighbours = new HashMap<>();
-
-        if (source.getCurrentDisk() != null) {
-            for (Disk disk1 : cliff.getDisks()) {
-                for (Disk disk2 : cliff.getDisks()) {
-                    if (disk1.getRadius() <= source.getRadius()) {
-                        helper(source, cliff, neighbours, disk1, disk2);
-                    }
+        while (unsettledNodes.size() != 0) {
+            Node currentNode = getLowestDistanceNode(unsettledNodes);
+            unsettledNodes.remove(currentNode);
+            for (Map.Entry<Node, Integer> adjacencyPair : currentNode.getAdjacentNodes().entrySet()) {
+                Node adjacentNode = adjacencyPair.getKey();
+                Integer edgeWeight = adjacencyPair.getValue();
+                if (!settledNodes.contains(adjacentNode)) {
+                    calculateMinimumDistance(adjacentNode, edgeWeight, currentNode);
+                    unsettledNodes.add(adjacentNode);
                 }
             }
-        } else {
-            for (Disk disk1 : cliff.getDisks()) {
-                for (Disk disk2 : cliff.getDisks()) {
-                    helper(source, cliff, neighbours, disk1, disk2);
-                }
-            }
+            settledNodes.add(currentNode);
         }
 
-        neighbours.remove(source);
-        return neighbours;
+        return graph;
     }
 
-    private static void helper(Node source, Cliff cliff, Map<Node, Integer> neighbours, Disk disk1, Disk disk2) {
-        for (Node V : cliff.getCoordinates()) {
-            if (!V.equals(source)) {
-                int sourceRadius = Math.max(disk1.getRadius(), source.getRadius());
-
-                int radius = sourceRadius + disk2.getRadius();
-
-                //  Check if node is in range with these disks
-                if (radius >= distance(source.getCoordinate(), V.getCoordinate())) {
-                    neighbours.computeIfAbsent(V, k -> disk2.getCost());
-                }
+    static Node getLowestDistanceNode(Set<Node> unsettledNodes) {
+        Node lowestDistanceNode = null;
+        int lowestDistance = Integer.MAX_VALUE;
+        for (Node node :unsettledNodes) {
+            int nodeDistance = node.getDistance();
+            if (nodeDistance < lowestDistance) {
+                lowestDistance = nodeDistance;
+                lowestDistanceNode = node;
             }
+        }
+        return lowestDistanceNode;
+    }
+
+    static void calculateMinimumDistance(Node evaluationNode, Integer edgeWeight, Node sourceNode) {
+        Integer sourceDistance = sourceNode.getDistance();
+        if (sourceDistance + edgeWeight < evaluationNode.getDistance()) {
+            evaluationNode.setDistance(sourceDistance + edgeWeight);
+            LinkedList<Node> shortestPath = new LinkedList<>(sourceNode.getShortestPath());
+            shortestPath.add(sourceNode);
+            evaluationNode.setShortestPath(shortestPath);
         }
     }
 
-    static double distance(Coordinate a, Coordinate b) {
-        return Math.hypot(Math.abs(a.getX() - b.getX()), Math.abs(a.getY() - b.getY()));
-    }
-
-    static Map<Node, Integer> findStartPoints(Cliff cliff) {
+    static Map<Node, Integer> findStartPoints(Graph graph) {
         Map<Node, Integer> startPoints = new HashMap<>();
 
-        for (Node V : cliff.getCoordinates()) {
-            for (Disk disk : cliff.getDisks()) {
-                if (disk.getRadius() >= V.getCoordinate().getY()) {
-                    if (startPoints.get(V) == null || startPoints.get(V) > disk.getCost()) {
-                        V.setCurrentDisk(disk);
-                        startPoints.put(V, disk.getCost());
-                    }
-                }
-            }
-        }
+        graph.getNodes().stream().filter(node -> {
+            return node.getValue().getCoordinate().getY() <= node.getValue().getDisk().getRadius();
+        }).forEach(node -> startPoints.put(node, node.getValue().getDisk().getCost()));
 
         return startPoints;
     }
 
-    static Map<Node, Integer> findEndPoints(Cliff cliff) {
-        Map<Node, Integer> endPoints = new HashMap<>();
+    static Set<Node> findEndPoints(Graph graph, int W) {
+        Set<Node> endPoints = new HashSet<>();
+        graph.getNodes().stream().filter(node -> {
+            int yOfNode = node.getValue().getCoordinate().getY();
+            int radiusOfNode = node.getValue().getDisk().getRadius();
 
-        for (Node V : cliff.getCoordinates()) {
-            for (Disk disk : cliff.getDisks()) {
-                if (cliff.getW() - disk.getRadius() <= V.getCoordinate().getY()) {
-                    if (endPoints.get(V) == null || endPoints.get(V) > disk.getCost()) {
-                        endPoints.put(V, disk.getCost());
-                    }
-                }
+            return yOfNode + radiusOfNode >= W;
+        }).forEach(endPoints::add);
+
+        return endPoints;
+    }
+
+    static void addDestinations (Graph graph, Node source) {
+        int sourceRadius = source.getValue().getDisk().getRadius();
+
+        for (Node destination : graph.getNodes()) {
+            int destinationRadius = destination.getValue().getDisk().getRadius();
+            int totalRadius = sourceRadius + destinationRadius;
+            if (distance(source, destination) <= totalRadius) {
+                int destinationCost = destination.getValue().getDisk().getCost();
+                source.addDestination(destination, destinationCost);
             }
         }
-        return endPoints;
+
+    }
+
+    static double distance(Node a, Node b) {
+        final Coordinate A = a.getValue().getCoordinate();
+        final Coordinate B = b.getValue().getCoordinate();
+
+        return Math.hypot(Math.abs(A.getX() - B.getX()), Math.abs(A.getY() - B.getY()));
     }
 }
 

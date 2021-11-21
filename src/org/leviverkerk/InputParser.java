@@ -22,14 +22,14 @@ public class InputParser {
         int M = Integer.parseInt(nAndM[1]);
         int W = Integer.parseInt(nAndM[2]);
 
-        ArrayList<Node> nodes = new ArrayList<>();
+        ArrayList<Coordinate> coordinates = new ArrayList<>();
 
         for (int i = 0; i < N; i++) {
             String line = myReader.nextLine();
             String[] coordinatesString = line.split(" ");
             int x = Integer.parseInt(coordinatesString[0]);
             int y = Integer.parseInt(coordinatesString[1]);
-            nodes.add(new Node(new Coordinate(x, y)));
+            coordinates.add(new Coordinate(x, y));
         }
 
         ArrayList<Disk> disks = new ArrayList<>();
@@ -44,7 +44,7 @@ public class InputParser {
 
         myReader.close();
 
-        return new Cliff(N, M, W, nodes, disks);
+        return new Cliff(N, M, W, coordinates, disks);
     }
 
     public static Cliff readInput(String filePath) throws FileNotFoundException {

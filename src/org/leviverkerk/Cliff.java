@@ -10,10 +10,10 @@ public class Cliff {
     private final int M;
     private final int W;
 
-    private final List<Node> coordinates;
+    private final List<Coordinate> coordinates;
     private final List<Disk> disks;
 
-    public Cliff(int n, int m, int w, ArrayList<Node> coordinates, ArrayList<Disk> disks) {
+    public Cliff(int n, int m, int w, ArrayList<Coordinate> coordinates, ArrayList<Disk> disks) {
         N = n;
         M = m;
         W = w;
@@ -33,7 +33,7 @@ public class Cliff {
         return W;
     }
 
-    public List<Node> getCoordinates() {
+    public List<Coordinate> getCoordinates() {
         return coordinates;
     }
 
