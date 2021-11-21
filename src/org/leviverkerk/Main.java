@@ -30,7 +30,7 @@ public class Main {
 
         for (Coordinate coordinate : cliff.getCoordinates()) {
             for (Disk disk : cliff.getDisks()) {
-                graph.addNode(new Node( new NodeValue(coordinate, disk)));
+                graph.addNode(new Node(new NodeValue(coordinate, disk)));
             }
         }
 
@@ -52,7 +52,7 @@ public class Main {
         // Find all endPoints and get endPoint with minimal cost
         int minimalCost = Integer.MAX_VALUE;
         for (Node endPoint : findEndPoints(graph, cliff.getW())) {
-            if(endPoint.getDistance() < minimalCost && endPoint.getDistance() >= 0){
+            if (endPoint.getDistance() < minimalCost && endPoint.getDistance() >= 0) {
                 minimalCost = endPoint.getDistance();
             }
         }
@@ -61,11 +61,15 @@ public class Main {
 
     }
 
+    /*
+    Runtime complexity
+     */
     static Graph dijkstra(Graph graph, Set<Node> startingNodes) {
         Set<Node> settledNodes = new HashSet<>();
         Set<Node> unsettledNodes = new HashSet<>(startingNodes);
 
         while (unsettledNodes.size() != 0) {
+            //  Runtime complexity O(n) with n
             Node currentNode = getLowestDistanceNode(unsettledNodes);
             unsettledNodes.remove(currentNode);
             for (Map.Entry<Node, Integer> adjacencyPair : currentNode.getAdjacentNodes().entrySet()) {
@@ -85,6 +89,9 @@ public class Main {
         return graph;
     }
 
+    /*
+    Runtime complexity of O(n) with n being the amount of unsettled nodes
+     */
     static Node getLowestDistanceNode(Set<Node> unsettledNodes) {
         Node lowestDistanceNode = null;
         int lowestDistance = Integer.MAX_VALUE;
@@ -98,6 +105,10 @@ public class Main {
         return lowestDistanceNode;
     }
 
+    /*
+    Sets
+    Runtime complexity O(1)
+     */
     static void calculateMinimumDistance(Node evaluationNode, Integer edgeWeight, Node sourceNode) {
         Integer sourceDistance = sourceNode.getDistance();
         if (sourceDistance + edgeWeight < evaluationNode.getDistance()) {
@@ -108,6 +119,11 @@ public class Main {
         }
     }
 
+    /*
+    @return a map of all nodes which can reach the beginning mapped to their distance
+    @graph this is the graph in which we want to look
+    Runtime complexity O(n) with n being the amount of nodes in the graph
+     */
     static Map<Node, Integer> findStartPoints(Graph graph) {
         Map<Node, Integer> startPoints = new HashMap<>();
 
@@ -117,6 +133,12 @@ public class Main {
         return startPoints;
     }
 
+    /*
+    @return a set with all nodes that reach the end (of the cliff)
+    @graph this is the graph in which we want to look
+    @W this is the height of the cliff
+    Runtime complexity O(n) with n being the amount of nodes in the graph
+     */
     static Set<Node> findEndPoints(Graph graph, int W) {
         Set<Node> endPoints = new HashSet<>();
         graph.getNodes().stream().filter(node -> {
@@ -129,7 +151,13 @@ public class Main {
         return endPoints;
     }
 
-    static void addDestinations (Graph graph, Node source) {
+    /*
+    This method adds all neighbours as destination to a node and adds the edge weight to the transaction
+    @graph this is the graph in which we want to search
+    @source this is the node for which we want to find each neighbour
+    Run time complexity O(n) with n being the amount of nodes in the graph
+     */
+    static void addDestinations(Graph graph, Node source) {
         int sourceRadius = source.getValue().getDisk().getRadius();
 
         for (Node destination : graph.getNodes()) {
@@ -143,6 +171,10 @@ public class Main {
 
     }
 
+    /*
+    @return the distance between node a and b
+    Runtime complexity O(1)
+     */
     static double distance(Node a, Node b) {
         final Coordinate A = a.getValue().getCoordinate();
         final Coordinate B = b.getValue().getCoordinate();
