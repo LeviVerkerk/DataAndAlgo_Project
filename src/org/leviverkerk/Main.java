@@ -14,7 +14,7 @@ public class Main {
 
             int result = getMinimalCost(InputParser.readInput("./src/org/leviverkerk/testInput1.txt"));
 
-            if (result != Integer.MAX_VALUE) {
+            if (result != Integer.MAX_VALUE && result >= 0) {
                 System.out.println(result);
             } else {
                 System.out.println("Impossible");
@@ -35,14 +35,16 @@ public class Main {
         }
 
         // Add all destinations to all nodes (with their corresponding edge weight)
-        Set<Node> startingNodes = new HashSet<>();
         graph.getNodes().forEach(source -> {
             addDestinations(graph, source);
-            startingNodes.add(source);
         });
 
         // Set distances for each startingPoint
-        findStartPoints(graph).forEach(Node::setDistance);
+        Set<Node> startingNodes = new HashSet<>();
+        findStartPoints(graph).forEach((key, value) -> {
+            key.setDistance(value);
+            startingNodes.add(key);
+        });
 
         //  Call #dijksta
         System.err.println(dijkstra(graph, startingNodes));
@@ -50,7 +52,7 @@ public class Main {
         // Find all endPoints and get endPoint with minimal cost
         int minimalCost = Integer.MAX_VALUE;
         for (Node endPoint : findEndPoints(graph, cliff.getW())) {
-            if(endPoint.getDistance() < minimalCost){
+            if(endPoint.getDistance() < minimalCost && endPoint.getDistance() >= 0){
                 minimalCost = endPoint.getDistance();
             }
         }
@@ -68,10 +70,13 @@ public class Main {
             unsettledNodes.remove(currentNode);
             for (Map.Entry<Node, Integer> adjacencyPair : currentNode.getAdjacentNodes().entrySet()) {
                 Node adjacentNode = adjacencyPair.getKey();
-                Integer edgeWeight = adjacencyPair.getValue();
-                if (!settledNodes.contains(adjacentNode)) {
-                    calculateMinimumDistance(adjacentNode, edgeWeight, currentNode);
-                    unsettledNodes.add(adjacentNode);
+                //  ! Optimization: if source is the same as destination we can skip!
+                if (currentNode != adjacentNode) {
+                    Integer edgeWeight = adjacencyPair.getValue();
+                    if (!settledNodes.contains(adjacentNode)) {
+                        calculateMinimumDistance(adjacentNode, edgeWeight, currentNode);
+                        unsettledNodes.add(adjacentNode);
+                    }
                 }
             }
             settledNodes.add(currentNode);
@@ -83,9 +88,9 @@ public class Main {
     static Node getLowestDistanceNode(Set<Node> unsettledNodes) {
         Node lowestDistanceNode = null;
         int lowestDistance = Integer.MAX_VALUE;
-        for (Node node :unsettledNodes) {
+        for (Node node : unsettledNodes) {
             int nodeDistance = node.getDistance();
-            if (nodeDistance < lowestDistance) {
+            if (nodeDistance <= lowestDistance) {
                 lowestDistance = nodeDistance;
                 lowestDistanceNode = node;
             }
